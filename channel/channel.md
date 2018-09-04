@@ -11,7 +11,8 @@ var a = make(chan int)
 ```go
 var a = make(chan int, 10)
 ```
+The most different between block and unblock channel is the capacity. Block channel is only the tool of communication and sync.
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0MzEwODEwNTEsLTE0MzQ3NTY3MjNdfQ
+eyJoaXN0b3J5IjpbLTE3MjUzMDE2MzQsLTE0MzQ3NTY3MjNdfQ
 ==
 -->
