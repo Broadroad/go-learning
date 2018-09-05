@@ -40,8 +40,17 @@ func main() {
     }
 }
 ```
-
+We can get the channel capacity and length 
+```go
+func main() {
+    ch := make(chan int, 100)
+    ch <- 1
+    fmt.Println(len(ch)) // 1
+    fmt.Println(cap(ch)) // 100
+}
+```
+len and cap is not function call, when build it will get h
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE0Mjg0MDUyOCwtMTcyNTMwMTYzNCwtMT
+eyJoaXN0b3J5IjpbMTk2MjIzNzc2OCwtMTcyNTMwMTYzNCwtMT
 QzNDc1NjcyM119
 -->
