@@ -49,8 +49,8 @@ func main() {
     fmt.Println(cap(ch)) // 100
 }
 ```
-len and cap is not function call, when build it will get h
+len and cap is not function call, when build it will get hchan's field.
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTk2MjIzNzc2OCwtMTcyNTMwMTYzNCwtMT
-QzNDc1NjcyM119
+eyJoaXN0b3J5IjpbOTUyNzM3MjcwLC0xNzI1MzAxNjM0LC0xND
+M0NzU2NzIzXX0=
 -->
