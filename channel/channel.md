@@ -70,9 +70,15 @@ func main() {
 ```
 close a channel will wake up all the goroutine which waiting on the channel. And then write g will find that the channel is closed, it will panic. One more thing, ch <- 1, it will block here until another g take away the message in the channel.
 So if you don't know very sure whether to need to send message to channel, please do not close the channel.
-You can receive message from channel which has been closed.
+You can receive message from channel which has been closed. 
+```go
+ch := make(chan int)
+close(ch)
+x := <-ch
+```
+if there is message in buffer channel, then it will take away the nm
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1NDM4NDMxMDIsMTEzNTQyODAzNSwtMT
-U4NDQxODUzMywxMjIyODcwOTcxLDk1MjczNzI3MCwtMTcyNTMw
-MTYzNCwtMTQzNDc1NjcyM119
+eyJoaXN0b3J5IjpbNDMyMjcxMDA4LDExMzU0MjgwMzUsLTE1OD
+Q0MTg1MzMsMTIyMjg3MDk3MSw5NTI3MzcyNzAsLTE3MjUzMDE2
+MzQsLTE0MzQ3NTY3MjNdfQ==
 -->
