@@ -76,9 +76,13 @@ ch := make(chan int)
 close(ch)
 x := <-ch
 ```
-if there is message in buffer channel, then it will take away the nm
+if there is message in buffer channel, then it will take away the message, but if there is no message, then it will return channel's element's nil. Use this to determine whether has message.
+```go
+x, ok := <-ch
+```
+if ok is false, then the 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNDMyMjcxMDA4LDExMzU0MjgwMzUsLTE1OD
-Q0MTg1MzMsMTIyMjg3MDk3MSw5NTI3MzcyNzAsLTE3MjUzMDE2
-MzQsLTE0MzQ3NTY3MjNdfQ==
+eyJoaXN0b3J5IjpbMTMxMjk3NzE1NCwxMTM1NDI4MDM1LC0xNT
+g0NDE4NTMzLDEyMjI4NzA5NzEsOTUyNzM3MjcwLC0xNzI1MzAx
+NjM0LC0xNDM0NzU2NzIzXX0=
 -->
