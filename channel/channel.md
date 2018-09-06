@@ -81,10 +81,14 @@ if there is message in buffer channel, then it will take away the message, but i
 x, ok := <-ch
 ```
 if ok is false, then the channel is closed, and the message is nil too.
-
-
+## Nil Channel
+only state channel but don't use make 
+```go
+var a chan int
+```
+close a nil channel will panic.
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNjg3OTgwMTM3LDQ0MzIzNzM4OSwxMTM1ND
-I4MDM1LC0xNTg0NDE4NTMzLDEyMjI4NzA5NzEsOTUyNzM3Mjcw
-LC0xNzI1MzAxNjM0LC0xNDM0NzU2NzIzXX0=
+eyJoaXN0b3J5IjpbLTYzNTg5MDY5OCw0NDMyMzczODksMTEzNT
+QyODAzNSwtMTU4NDQxODUzMywxMjIyODcwOTcxLDk1MjczNzI3
+MCwtMTcyNTMwMTYzNCwtMTQzNDc1NjcyM119
 -->
