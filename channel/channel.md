@@ -56,8 +56,20 @@ ch := make(chan int)
 close(ch)
 ch <- 1 // panic: send on closed channel
 ```
-
+if close a channel, and a sender goroutine is waiting on the  blocking channel, then it will panic. 
+```go
+func main() {
+    ch := make(chan int)
+    go func() { ch <- 1 }() // panic: send on closed channel
+    time.Sleep(time.Second)
+    go func() { close(ch) }()
+    time.Sleep(time.Second)
+    x, ok := <-ch
+    fmt.Println(x, ok)
+}
+```
+close a channel will
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTIyMjg3MDk3MSw5NTI3MzcyNzAsLTE3Mj
-UzMDE2MzQsLTE0MzQ3NTY3MjNdfQ==
+eyJoaXN0b3J5IjpbLTE3MTY0NTA1NzMsMTIyMjg3MDk3MSw5NT
+I3MzcyNzAsLTE3MjUzMDE2MzQsLTE0MzQ3NTY3MjNdfQ==
 -->
