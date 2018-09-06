@@ -68,9 +68,11 @@ func main() {
     fmt.Println(x, ok)
 }
 ```
-close a channel will wake up all the goroutine which waiting on the channel. And then write g will find that the channel is closed, it will panic. One more thing, ch <- 1, it will block here until another g take away the message in the channel
+close a channel will wake up all the goroutine which waiting on the channel. And then write g will find that the channel is closed, it will panic. One more thing, ch <- 1, it will block here until another g take away the message in the channel.
+So if you don't know very sure whether to need to send message to channel, please do not close the channel.
+You can receive message from channel which has been closed.
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTEzNTQyODAzNSwtMTU4NDQxODUzMywxMj
-IyODcwOTcxLDk1MjczNzI3MCwtMTcyNTMwMTYzNCwtMTQzNDc1
-NjcyM119
+eyJoaXN0b3J5IjpbLTE1NDM4NDMxMDIsMTEzNTQyODAzNSwtMT
+U4NDQxODUzMywxMjIyODcwOTcxLDk1MjczNzI3MCwtMTcyNTMw
+MTYzNCwtMTQzNDc1NjcyM119
 -->
