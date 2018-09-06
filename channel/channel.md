@@ -80,9 +80,9 @@ if there is message in buffer channel, then it will take away the message, but i
 ```go
 x, ok := <-ch
 ```
-if ok is false, then the 
+if ok is false, then the channel is closed, and the message is nil too.
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTMxMjk3NzE1NCwxMTM1NDI4MDM1LC0xNT
-g0NDE4NTMzLDEyMjI4NzA5NzEsOTUyNzM3MjcwLC0xNzI1MzAx
-NjM0LC0xNDM0NzU2NzIzXX0=
+eyJoaXN0b3J5IjpbNDQzMjM3Mzg5LDExMzU0MjgwMzUsLTE1OD
+Q0MTg1MzMsMTIyMjg3MDk3MSw5NTI3MzcyNzAsLTE3MjUzMDE2
+MzQsLTE0MzQ3NTY3MjNdfQ==
 -->
