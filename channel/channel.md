@@ -87,8 +87,13 @@ only state channel but don't use make
 var a chan int
 ```
 close a nil channel will panic.
+```go
+var a chan int
+close(a) // panic: close of nil channel
+```
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTYzNTg5MDY5OCw0NDMyMzczODksMTEzNT
+eyJoaXN0b3J5IjpbMjEzNTc1ODExNSw0NDMyMzczODksMTEzNT
 QyODAzNSwtMTU4NDQxODUzMywxMjIyODcwOTcxLDk1MjczNzI3
 MCwtMTcyNTMwMTYzNCwtMTQzNDc1NjcyM119
 -->
