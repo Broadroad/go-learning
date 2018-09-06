@@ -50,7 +50,8 @@ func main() {
 }
 ```
 len and cap is not function call, when build it will get hchan's field.
+
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbOTUyNzM3MjcwLC0xNzI1MzAxNjM0LC0xND
-M0NzU2NzIzXX0=
+eyJoaXN0b3J5IjpbLTE1MDg4OTkxNjQsOTUyNzM3MjcwLC0xNz
+I1MzAxNjM0LC0xNDM0NzU2NzIzXX0=
 -->
