@@ -68,8 +68,9 @@ func main() {
     fmt.Println(x, ok)
 }
 ```
-close a channel will wake up all the goroutine which waiting on the channel. And then write g will find that the channel is closed, it will panic.
+close a channel will wake up all the goroutine which waiting on the channel. And then write g will find that the channel is closed, it will panic. One mor
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1ODQ0MTg1MzMsMTIyMjg3MDk3MSw5NT
-I3MzcyNzAsLTE3MjUzMDE2MzQsLTE0MzQ3NTY3MjNdfQ==
+eyJoaXN0b3J5IjpbLTU2MjUxODA3NSwtMTU4NDQxODUzMywxMj
+IyODcwOTcxLDk1MjczNzI3MCwtMTcyNTMwMTYzNCwtMTQzNDc1
+NjcyM119
 -->
