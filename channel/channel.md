@@ -50,8 +50,14 @@ func main() {
 }
 ```
 len and cap is not function call, when build it will get hchan's field.
+If channel is closed then we can not send message to the channel, or it will panic.
+```go
+ch := make(chan int)
+close(ch)
+ch <- 1 // panic: send on closed channel
+```
 
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE1MDg4OTkxNjQsOTUyNzM3MjcwLC0xNz
-I1MzAxNjM0LC0xNDM0NzU2NzIzXX0=
+eyJoaXN0b3J5IjpbMTIyMjg3MDk3MSw5NTI3MzcyNzAsLTE3Mj
+UzMDE2MzQsLTE0MzQ3NTY3MjNdfQ==
 -->
