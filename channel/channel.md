@@ -92,10 +92,11 @@ var a chan int
 close(a) // panic: close of nil channel
 ```
 ## Close Principle
-one sender, multiple receiver, sender close the channel,  inform othter
+one sender, multiple receiver, sender close the channel,  inform others that the data is over.
+if there exist some sender, then we will not know
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbNTA0Nzg4NDc3LDIxMzU3NTgxMTUsNDQzMj
-M3Mzg5LDExMzU0MjgwMzUsLTE1ODQ0MTg1MzMsMTIyMjg3MDk3
-MSw5NTI3MzcyNzAsLTE3MjUzMDE2MzQsLTE0MzQ3NTY3MjNdfQ
-==
+eyJoaXN0b3J5IjpbMTcxMDIyOTQyNiwyMTM1NzU4MTE1LDQ0Mz
+IzNzM4OSwxMTM1NDI4MDM1LC0xNTg0NDE4NTMzLDEyMjI4NzA5
+NzEsOTUyNzM3MjcwLC0xNzI1MzAxNjM0LC0xNDM0NzU2NzIzXX
+0=
 -->
