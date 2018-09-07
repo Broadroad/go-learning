@@ -93,10 +93,11 @@ close(a) // panic: close of nil channel
 ```
 ## Close Principle
 one sender, multiple receiver, sender close the channel,  inform others that the data is over.
-if there exist some sender, then we will not know
+if there exist some sender, then we will not know when the send is over. Then we should use another channel to broadcast the signal. This sounds like top channel or done channel.
+BTW, if there is no g is blocking on the channel, you c
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMTcxMDIyOTQyNiwyMTM1NzU4MTE1LDQ0Mz
-IzNzM4OSwxMTM1NDI4MDM1LC0xNTg0NDE4NTMzLDEyMjI4NzA5
-NzEsOTUyNzM3MjcwLC0xNzI1MzAxNjM0LC0xNDM0NzU2NzIzXX
-0=
+eyJoaXN0b3J5IjpbLTEyODM1NTA3MzIsMjEzNTc1ODExNSw0ND
+MyMzczODksMTEzNTQyODAzNSwtMTU4NDQxODUzMywxMjIyODcw
+OTcxLDk1MjczNzI3MCwtMTcyNTMwMTYzNCwtMTQzNDc1NjcyM1
+19
 -->
