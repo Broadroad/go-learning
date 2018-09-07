@@ -91,9 +91,11 @@ close a nil channel will panic.
 var a chan int
 close(a) // panic: close of nil channel
 ```
-
+## Close Principle
+one sender, multiple receiver, sender close the channel,  inform othter
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjEzNTc1ODExNSw0NDMyMzczODksMTEzNT
-QyODAzNSwtMTU4NDQxODUzMywxMjIyODcwOTcxLDk1MjczNzI3
-MCwtMTcyNTMwMTYzNCwtMTQzNDc1NjcyM119
+eyJoaXN0b3J5IjpbNTA0Nzg4NDc3LDIxMzU3NTgxMTUsNDQzMj
+M3Mzg5LDExMzU0MjgwMzUsLTE1ODQ0MTg1MzMsMTIyMjg3MDk3
+MSw5NTI3MzcyNzAsLTE3MjUzMDE2MzQsLTE0MzQ3NTY3MjNdfQ
+==
 -->
