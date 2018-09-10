@@ -3,7 +3,7 @@ This article is only used to analysis channel source code
 ## hchan
 hchan is the main structure of channel. Let's look at it first.
 ```go
-// channel 在 runtime 中的结构体
+// channel struct in runtime
 type hchan struct {
     // 队列中目前的元素计数
     qcount uint // total data in the queue
@@ -36,8 +36,6 @@ type hchan struct {
 }
 
 ```
-
-## init
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbMjU5OTgxOTAzLC0yMTMxNTg0OTQyXX0=
+eyJoaXN0b3J5IjpbLTc1ODkzNTMzMiwtMjEzMTU4NDk0Ml19
 -->
