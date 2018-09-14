@@ -91,7 +91,8 @@ func makechan(t *chantype, size int) *hchan {
     return c
 }
 ```
+#
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbODQ4Mzk4MDUsLTc1ODkzNTMzMiwtMjEzMT
-U4NDk0Ml19
+eyJoaXN0b3J5IjpbMTI0ODI0OTYwNiw4NDgzOTgwNSwtNzU4OT
+M1MzMyLC0yMTMxNTg0OTQyXX0=
 -->
