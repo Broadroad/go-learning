@@ -259,7 +259,208 @@ func send(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
     goready(gp, skip+1)
 }
 ```
+## Receive
+```go
+// entry points for <- c from compiled code
+//go:nosplit
+func chanrecv1(c *hchan, elem unsafe.Pointer) {
+    chanrecv(c, elem, true)
+}
+//go:nosplit
+func chanrecv2(c *hchan, elem unsafe.Pointer) (received bool) {
+    _, received = chanrecv(c, elem, true)
+    return
+}
+func chanrecv(c *hchan, ep unsafe.Pointer, block bool) (selected, received bool) {
+    // raceenabled: don't need to check ep, as it is always on the stack
+    // or is new memory allocated by reflect.
+
+    // 如果在 nil channel 上进行 recv 操作，那么会永远阻塞
+    if c == nil {
+        if !block {
+            // 非阻塞的情况下
+            // 要直接返回
+            // 非阻塞出现在一些 select 的场景中
+            // 参见 selectnbrecv/selectnbrecv2
+            return
+        }
+        // 当前 goroutine: Grunning -> Gwaiting
+        // 其实就是该 goroutine 直接泄露 leak 了
+        gopark(nil, nil, "chan receive (nil chan)", traceEvGoStop, 2)
+
+        // 放个 throw 有点莫名其妙
+        // 不过这段代码确实永远达到不了
+        throw("unreachable")
+    }
+
+    // Fast path: check for failed non-blocking operation without acquiring the lock.
+    //
+    // After observing that the channel is not ready for receiving, we observe that the
+    // channel is not closed. Each of these observations is a single word-sized read
+    // (first c.sendq.first or c.qcount, and second c.closed).
+    // Because a channel cannot be reopened, the later observation of the channel
+    // being not closed implies that it was also not closed at the moment of the
+    // first observation. We behave as if we observed the channel at that moment
+    // and report that the receive cannot proceed.
+    //
+    // The order of operations is important here: reversing the operations can lead to
+    // incorrect behavior when racing with a close.
+    if !block && (c.dataqsiz == 0 && c.sendq.first == nil ||
+        c.dataqsiz > 0 && atomic.Loaduint(&c.qcount) == 0) &&
+        atomic.Load(&c.closed) == 0 {
+        // 非阻塞且没内容可收的情况下要直接返回
+        // 两个 bool 的零值就是 false，false
+        return
+    }
+
+    var t0 int64
+    if blockprofilerate > 0 {
+        t0 = cputicks()
+    }
+
+    lock(&c.lock)
+
+    // 当前 channel 中没有数据可读
+    // 直接返回 not selected
+    if c.closed != 0 && c.qcount == 0 {
+        unlock(&c.lock)
+        if ep != nil {
+            typedmemclr(c.elemtype, ep)
+        }
+        return true, false
+    }
+
+    // sender 队列中有 sudog 在等待
+    // 直接从该 sudog 中获取数据拷贝到当前 g 即可
+    if sg := c.sendq.dequeue(); sg != nil {
+        // Found a waiting sender. If buffer is size 0, receive value
+        // directly from sender. Otherwise, receive from head of queue
+        // and add sender's value to the tail of the queue (both map to
+        // the same buffer slot because the queue is full).
+        recv(c, sg, ep, func() { unlock(&c.lock) }, 3)
+        return true, true
+    }
+
+    if c.qcount > 0 {
+        // Receive directly from queue
+        qp := chanbuf(c, c.recvx)
+
+        // 直接从 buffer 里拷贝数据
+        if ep != nil {
+            typedmemmove(c.elemtype, ep, qp)
+        }
+        typedmemclr(c.elemtype, qp)
+        // 接收索引 +1
+        c.recvx++
+        if c.recvx == c.dataqsiz {
+            c.recvx = 0
+        }
+        // buffer 元素计数 -1
+        c.qcount--
+        unlock(&c.lock)
+        return true, true
+    }
+
+    if !block {
+        unlock(&c.lock)
+        // 非阻塞时，且无数据可收
+        // 始终不选中，这是在 buffer 中没内容的时候
+        return false, false
+    }
+
+    // no sender available: block on this channel.
+    gp := getg()
+    mysg := acquireSudog()
+    mysg.releasetime = 0
+    if t0 != 0 {
+        mysg.releasetime = -1
+    }
+    // No stack splits between assigning elem and enqueuing mysg
+    // on gp.waiting where copystack can find it.
+    // 打包成 sudog
+    mysg.elem = ep
+    mysg.waitlink = nil
+    gp.waiting = mysg
+    mysg.g = gp
+    mysg.isSelect = false
+    mysg.c = c
+    gp.param = nil
+    // 进入 recvq 队列
+    c.recvq.enqueue(mysg)
+
+    // Grunning -> Gwaiting
+    goparkunlock(&c.lock, "chan receive", traceEvGoBlockRecv, 3)
+
+    // someone woke us up
+    // 被唤醒
+    if mysg != gp.waiting {
+        throw("G waiting list is corrupted")
+    }
+    gp.waiting = nil
+    if mysg.releasetime > 0 {
+        blockevent(mysg.releasetime-t0, 2)
+    }
+    closed := gp.param == nil
+    gp.param = nil
+    mysg.c = nil
+    releaseSudog(mysg)
+    // 如果 channel 未被关闭，那就是真的 recv 到数据了
+    return true, !closed
+}
+
+// recv processes a receive operation on a full channel c.
+// There are 2 parts:
+// 1) The value sent by the sender sg is put into the channel
+//    and the sender is woken up to go on its merry way.
+// 2) The value received by the receiver (the current G) is
+//    written to ep.
+// For synchronous channels, both values are the same.
+// For asynchronous channels, the receiver gets its data from
+// the channel buffer and the sender's data is put in the
+// channel buffer.
+// Channel c must be full and locked. recv unlocks c with unlockf.
+// sg must already be dequeued from c.
+// A non-nil ep must point to the heap or the caller's stack.
+func recv(c *hchan, sg *sudog, ep unsafe.Pointer, unlockf func(), skip int) {
+	if c.dataqsiz == 0 {
+		if ep != nil {
+			// copy data from sender
+			recvDirect(c.elemtype, sg, ep)
+		}
+	} else {
+		// Queue is full. Take the item at the
+		// head of the queue. Make the sender enqueue
+		// its item at the tail of the queue. Since the
+		// queue is full, those are both the same slot.
+		qp := chanbuf(c, c.recvx)
+
+		// copy data from queue to receiver
+		// 英文写的很明白
+		if ep != nil {
+			typedmemmove(c.elemtype, ep, qp)
+		}
+		// copy data from sender to queue
+		// 英文写的很明白
+		typedmemmove(c.elemtype, qp, sg.elem)
+		c.recvx++
+		if c.recvx == c.dataqsiz {
+			c.recvx = 0
+		}
+		c.sendx = c.recvx // c.sendx = (c.sendx+1) % c.dataqsiz
+	}
+	sg.elem = nil
+	gp := sg.g
+	unlockf()
+	gp.param = unsafe.Pointer(sg)
+	if sg.releasetime != 0 {
+		sg.releasetime = cputicks()
+	}
+
+	// Gwaiting -> Grunnable
+	goready(gp, skip+1)
+}
+```
 <!--stackedit_data:
-eyJoaXN0b3J5IjpbLTE3NjM5MTg5ODUsODQ4Mzk4MDUsLTc1OD
-kzNTMzMiwtMjEzMTU4NDk0Ml19
+eyJoaXN0b3J5IjpbLTExODc3MTkwNiwtMTc2MzkxODk4NSw4ND
+gzOTgwNSwtNzU4OTM1MzMyLC0yMTMxNTg0OTQyXX0=
 -->
